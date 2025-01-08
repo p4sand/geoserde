@@ -100,14 +100,15 @@ impl Properties for MyFeature2 {
     }
 }
 impl Feature for MyFeature2 {
-    // シリアライズと同じで、ジオメトリとプロパティのどちらが先かはデータ形式の側が決める。
     // プロパティ内の順序はデータ形式とデータ構造の間で同一とする。（暫定仕様）・・・serdeを使えば良いのでは？
+    // serdeのhelperが全て使えるわけではない・・・serdeを使えば良いのでは？
     // データ構造の都合で、ジオメトリとプロパティが一度に揃う必要がある。
     fn deserialize(fmt: &(impl GeometryFormat + ProperyFormat)) -> Self {
         // child = Some(fmt.parse_property::<Child>("child") || fmt.parse_geometry::<Child>());
         Self {
+            // TODO: シリアライズと同じで、ジオメトリとプロパティのどちらが先かはデータ形式の側が決める。
             child: <Child2 as Properties>::deserialize("child", fmt)
-                .unwrap_or_else(|| Geometry::deserialize(fmt)),
+                .unwrap_or_else(|| <Child2 as Geometry>::deserialize(fmt)),
             title: <String as Properties>::deserialize("title", fmt).unwrap(),
         }
     }
