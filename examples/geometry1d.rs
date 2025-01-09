@@ -56,7 +56,11 @@ pub trait Feature: Geometry + Properties {
 
 #[derive(geoserde::Feature)]
 pub struct Child2 {
-    #[geometry]
+    // #[geometry]
+    // 親に#[geometry]がついていないと、プロパティとして出力されてしまう！ → geometryという名前でなければならない？
+
+    // ここ以外(Child3)にもジオメトリがあったら？
+    // Child3は単体で入出力される時のためにgeometryを持つ。親がMyFeature2の時だけプロパティとして出したい。
     loc: geo_types::Point,
     count: i32,
 }
@@ -86,6 +90,8 @@ pub struct MyFeature2 {
     // デシリアライズには必須ではない。シリアライズに必須かどうかもデータ形式次第。
     #[geometry]
     child: Child2,
+    // child_re: Child2,
+    // #[serde(skip)] 効かない！
     title: String,
 }
 impl Geometry for MyFeature2 {
